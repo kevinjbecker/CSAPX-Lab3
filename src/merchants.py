@@ -5,17 +5,21 @@ This is just so I can commit properly
 import collections
 from typing import List
 from typing import Tuple
+from random import random
 from sys import argv
+from time import clock
 
 Merchant = collections.namedtuple('Merchant',  ('merchant_name', 'merchant_location'))
 
 
 def main()->None:
-    merchants = quick_sort(read_merchants(argv[1]))
-    for merchant in merchants:
-        print(merchant.merchant_name, ' is located  at ', merchant.merchant_location)
+    merchants = read_merchants(argv[1])
 
-    print('The median merchant is: ', merchants[len(merchants)//2].merchant_name, ' at location ', merchants[len(merchants)//2].merchant_location)
+    start = clock()
+    median_merchant = quick_select(merchants, len(merchants)//2)
+    end = clock() - start
+
+    print(median_merchant, end)
 
 
 def read_merchants(filename: str) -> List[Merchant]:
@@ -66,6 +70,36 @@ def quick_sort(data: List[Merchant]) -> List[Merchant]:
         pivot = data[0]
         less, equal, greater = _partition(data, pivot)
         return quick_sort(less) + equal + quick_sort(greater)
+
+
+def quick_select(data: List[Merchant], k: int) -> Merchant:
+    """
+    Performs a quick select and returns the k-th smallest element (in this case it will always be the median element)
+    :param data: The data to be selected upon (a list)
+    :param k: The k-th element to find in the list.
+    :return: A Merchant namedtuple which is the median element.
+    """
+
+    if len(data) == 1:
+        return data[0]
+
+    pivot = data[int(random() * len(data))]
+    less, equal, greater = _partition(data, pivot)
+
+    # this is used for the next set of conditionals
+    count = len(equal)
+    m = len(less)
+
+    # if m is less than k and k is less than m+count, we know that the pivot is the k-th element
+    if m <= k <= m+count:
+        return pivot
+    # if m is greater than k, we must run quick_select again on the less list
+    elif m > k:
+        return quick_select(less, k)
+    # if we get here, we must run quick_select on the greater list
+    else:
+        return quick_select(greater, k-m-count)
+
 
 
 if __name__ == "__main__":
