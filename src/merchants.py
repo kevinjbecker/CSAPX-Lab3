@@ -13,13 +13,25 @@ Merchant = collections.namedtuple('Merchant',  ('merchant_name', 'merchant_locat
 
 
 def main()->None:
-    merchants = read_merchants(argv[1])
+    if len(argv) > 3:
+        # if it gets here, too many commands were provided, tell user what proper command usage would be
+        print('Usage: python3 merchants.py [slow|fast] input-file')
+    else:
+        merchants = read_merchants(argv[3])
+        number_of_merchants = len(merchants)
 
-    start = clock()
-    median_merchant = quick_select(merchants, len(merchants)//2)
-    end = clock() - start
-
-    print(median_merchant, end)
+        # gets into the nitty gritty of what's supposed to be happening
+        start = clock()
+        if argv[2] == 'slow':
+            method = 'slow'
+            quick_sorted_merchants = quick_sort(merchants)
+            optimal = quick_sorted_merchants[len(merchants) // 2]
+        else:
+            method = 'fast'
+            optimal = quick_select(merchants, len(merchants)//2)
+        finish = clock() - start
+        print('Search type:', method, '\nNumber of merchants:', number_of_merchants, '\nElapsed time:', finish,
+              '\nOptimal store location:', optimal)
 
 
 def read_merchants(filename: str) -> List[Merchant]:
@@ -99,7 +111,6 @@ def quick_select(data: List[Merchant], k: int) -> Merchant:
     # if we get here, we must run quick_select on the greater list
     else:
         return quick_select(greater, k-m-count)
-
 
 
 if __name__ == "__main__":
