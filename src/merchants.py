@@ -18,10 +18,10 @@ def main()->None:
         print('Usage: python3 merchants.py [slow|fast] input-file')
 
     else:
-        if len(argv) == 2:
-            merchants = read_merchants(argv[1])
-        else:
-            merchants = read_merchants(argv[2])
+        # this reads in the merchants
+        merchants = read_merchants(argv[len(argv) - 1])
+
+        # gathers the number of merchants
         number_of_merchants = len(merchants)
 
         # gets into the nitty gritty of what's supposed to be happening
@@ -44,9 +44,9 @@ def main()->None:
 
 def read_merchants(filename: str) -> List[Merchant]:
     """
-    Read Mer from a file into a list of Person namedtuples.
+    Read Merchants from a file into a list of Merchants namedtuples.
     :param filename: The name of the file
-    :return: A list of Person
+    :return: A list of Merchant
     """
     merchants = list()
     with open(filename) as f:
@@ -67,6 +67,9 @@ def _partition(data: List[Merchant], pivot: Merchant) -> Tuple[List[Merchant], L
     :param pivot: The value to partition the data on
     :return: Three list: smaller, equal and greater
     """
+
+    # partitions the lists into three lists: those of less, those of greater and those of less value in terms of location number
+
     less, equal, greater = [], [], []
     for element in data:
         if element.merchant_location < pivot.merchant_location:
@@ -84,11 +87,16 @@ def quick_sort(data: List[Merchant]) -> List[Merchant]:
     :param data: The data to be sorted (a list)
     :return: A sorted list
     """
+
+    # quick sort returns an empty list if the length of the data is 0
     if len(data) == 0:
         return []
     else:
-        pivot = data[0]
+        # the pivot is selected by random
+        pivot = data[int(random() * len(data))]
+        # the items are partitioned based on the pivot
         less, equal, greater = _partition(data, pivot)
+        # recurses through until all are sorted
         return quick_sort(less) + equal + quick_sort(greater)
 
 
@@ -101,13 +109,17 @@ def quick_select(data: List[Merchant], k: int) -> Merchant:
     """
 
     if len(data) == 1:
+        # if the length of the data list is 1, we return data
         return data[0]
 
+    # the pivot is selected
     pivot = data[int(random() * len(data))]
+    # the elements are partitioned based on the pivot
     less, equal, greater = _partition(data, pivot)
 
     # this is used for the next set of conditionals
     count = len(equal)
+    # the length of the less list is m
     m = len(less)
 
     # if m is less than k and k is less than m+count, we know that the pivot is the k-th element
