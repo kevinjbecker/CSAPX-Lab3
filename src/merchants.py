@@ -13,16 +13,20 @@ Merchant = collections.namedtuple('Merchant',  ('merchant_name', 'merchant_locat
 
 
 def main()->None:
-    if len(argv) > 3:
+    if len(argv) > 3 or (len(argv) == 3 and (argv[1].lower() not in ['fast', 'slow'])):
         # if it gets here, too many commands were provided, tell user what proper command usage would be
         print('Usage: python3 merchants.py [slow|fast] input-file')
+
     else:
-        merchants = read_merchants(argv[3])
+        if len(argv) == 2:
+            merchants = read_merchants(argv[1])
+        else:
+            merchants = read_merchants(argv[2])
         number_of_merchants = len(merchants)
 
         # gets into the nitty gritty of what's supposed to be happening
         start = clock()
-        if argv[2] == 'slow':
+        if argv[1] == 'slow':
             method = 'slow'
             quick_sorted_merchants = quick_sort(merchants)
             optimal = quick_sorted_merchants[len(merchants) // 2]
@@ -30,8 +34,12 @@ def main()->None:
             method = 'fast'
             optimal = quick_select(merchants, len(merchants)//2)
         finish = clock() - start
+
+        sum_of_distances = 0
+        for merchant in merchants:
+            sum_of_distances += abs(optimal.merchant_location - merchant.merchant_location)
         print('Search type:', method, '\nNumber of merchants:', number_of_merchants, '\nElapsed time:', finish,
-              '\nOptimal store location:', optimal)
+              '\nOptimal store location:', optimal, '\nSum of distances:', sum_of_distances)
 
 
 def read_merchants(filename: str) -> List[Merchant]:
