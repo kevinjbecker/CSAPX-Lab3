@@ -13,6 +13,10 @@ Merchant = collections.namedtuple('Merchant',  ('merchant_name', 'merchant_locat
 
 
 def main()->None:
+    """
+    The main function of the program, runs the requested items
+    :return: None
+    """
     if len(argv) > 3 or (len(argv) == 3 and (argv[1].lower() not in ['fast', 'slow'])):
         # if it gets here, too many commands were provided, tell user what proper command usage would be
         print('Usage: python3 merchants.py [slow|fast] input-file')
